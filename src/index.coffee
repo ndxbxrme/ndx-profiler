@@ -28,11 +28,11 @@ module.exports = (ndx) ->
   ndx.app.use (req, res, next) ->
     startTime = Date.now()
     profile.count.all++
-    profile.count[req.method] = (profile.count[req.method] or 0)++
+    profile.count[req.method] = (profile.count[req.method] or 0) + 1
     res.on 'finish', ->
       endTime = Date.now()
       profile.responseTime += endTime - startTime
-      profile.status[res.status] = (profile.status[res.status] or 0)++
+      profile.status[res.status] = (profile.status[res.status] or 0) + 1
     next()
   ndx.app.get '/api/profiler', ndx.authenticate('superadmin'), (req, res) ->
     profile.memory = process.memoryUsage().rss / 1048576
