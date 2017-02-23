@@ -14,7 +14,7 @@ module.exports = (ndx) ->
       update: 0
       select: 0
       delete: 0
-    cpu = []
+    cpu: []
   cpu.usage (arr) ->
     profile.cpu = arr
   ndx.database.on 'insert', ->
