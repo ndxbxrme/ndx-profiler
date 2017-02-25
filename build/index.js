@@ -49,7 +49,7 @@
     ndx.app.use(function(req, res, next) {
       var startTime;
       isProfiler = false;
-      if (req.route.path === '/api/profiler') {
+      if (req.url === '/api/profiler') {
         isProfiler = true;
       } else {
         startTime = Date.now();
