@@ -60,8 +60,7 @@
       res.on('finish', function() {
         var endTime;
         if (isProfiler) {
-          isProfiler = false;
-          return profile.db.select--;
+          return isProfiler = false;
         } else {
           endTime = Date.now();
           profile.responseTime += endTime - startTime;
