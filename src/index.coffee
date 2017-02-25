@@ -34,6 +34,7 @@ module.exports = (ndx) ->
       profile.db.select++
   ndx.app.use (req, res, next) ->
     isProfiler = false
+    startTime = null
     if req.url is '/api/profiler'
       isProfiler = true
     else

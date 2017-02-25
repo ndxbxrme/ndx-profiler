@@ -49,6 +49,7 @@
     ndx.app.use(function(req, res, next) {
       var startTime;
       isProfiler = false;
+      startTime = null;
       if (req.url === '/api/profiler') {
         isProfiler = true;
       } else {
