@@ -44,6 +44,7 @@ module.exports = (ndx) ->
     res.on 'finish', ->
       if isProfiler
         isProfiler = false
+        profile.db.select--
       else
         endTime = Date.now()
         profile.responseTime += endTime - startTime
