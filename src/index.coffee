@@ -3,6 +3,7 @@
 cpu = require './cpu.js'
 
 module.exports = (ndx) ->
+  isProfiler = false
   profile =
     memory: 0
     responseTime: 0
@@ -20,21 +21,32 @@ module.exports = (ndx) ->
     version: ndx.version
     dbVersion: ndx.database.version()
   ndx.database.on 'insert', ->
-    profile.db.insert++
+    if not isProfiler
+      profile.db.insert++
   ndx.database.on 'update', ->
-    profile.db.update++
+    if not isProfiler
+      profile.db.update++
   ndx.database.on 'delete', ->
-    profile.db.delete++
+    if not isProfiler
+      profile.db.delete++
   ndx.database.on 'select', ->
-    profile.db.select++
+    if not isProfiler
+      profile.db.select++
   ndx.app.use (req, res, next) ->
-    startTime = Date.now()
-    profile.count.all++
-    profile.count[req.method] = (profile.count[req.method] or 0) + 1
+    isProfiler = false
+    if req.route.path is '/api/profiler'
+      isProfiler = true
+    else
+      startTime = Date.now()
+      profile.count.all++
+      profile.count[req.method] = (profile.count[req.method] or 0) + 1
     res.on 'finish', ->
-      endTime = Date.now()
-      profile.responseTime += endTime - startTime
-      profile.status[res.statusCode] = (profile.status[res.statusCode] or 0) + 1
+      if isProfiler
+        isProfiler = false
+      else
+        endTime = Date.now()
+        profile.responseTime += endTime - startTime
+        profile.status[res.statusCode] = (profile.status[res.statusCode] or 0) + 1
     next()
   ndx.app.get '/api/profiler', ndx.authenticate('superadmin'), (req, res) ->
     profile.memory = process.memoryUsage().rss / 1048576

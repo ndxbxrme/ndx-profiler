@@ -5,7 +5,8 @@
   cpu = require('./cpu.js');
 
   module.exports = function(ndx) {
-    var profile;
+    var isProfiler, profile;
+    isProfiler = false;
     profile = {
       memory: 0,
       responseTime: 0,
@@ -26,27 +27,44 @@
       dbVersion: ndx.database.version()
     };
     ndx.database.on('insert', function() {
-      return profile.db.insert++;
+      if (!isProfiler) {
+        return profile.db.insert++;
+      }
     });
     ndx.database.on('update', function() {
-      return profile.db.update++;
+      if (!isProfiler) {
+        return profile.db.update++;
+      }
     });
     ndx.database.on('delete', function() {
-      return profile.db["delete"]++;
+      if (!isProfiler) {
+        return profile.db["delete"]++;
+      }
     });
     ndx.database.on('select', function() {
-      return profile.db.select++;
+      if (!isProfiler) {
+        return profile.db.select++;
+      }
     });
     ndx.app.use(function(req, res, next) {
       var startTime;
-      startTime = Date.now();
-      profile.count.all++;
-      profile.count[req.method] = (profile.count[req.method] || 0) + 1;
+      isProfiler = false;
+      if (req.route.path === '/api/profiler') {
+        isProfiler = true;
+      } else {
+        startTime = Date.now();
+        profile.count.all++;
+        profile.count[req.method] = (profile.count[req.method] || 0) + 1;
+      }
       res.on('finish', function() {
         var endTime;
-        endTime = Date.now();
-        profile.responseTime += endTime - startTime;
-        return profile.status[res.statusCode] = (profile.status[res.statusCode] || 0) + 1;
+        if (isProfiler) {
+          return isProfiler = false;
+        } else {
+          endTime = Date.now();
+          profile.responseTime += endTime - startTime;
+          return profile.status[res.statusCode] = (profile.status[res.statusCode] || 0) + 1;
+        }
       });
       return next();
     });
