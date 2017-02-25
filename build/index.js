@@ -49,21 +49,20 @@
     ndx.app.use(function(req, res, next) {
       var startTime;
       isProfiler = false;
-      startTime = null;
+      startTime = Date.now();
       if (req.url === '/api/profiler') {
         isProfiler = true;
       } else {
-        startTime = Date.now();
         profile.count.all++;
         profile.count[req.method] = (profile.count[req.method] || 0) + 1;
       }
       res.on('finish', function() {
         var endTime;
+        endTime = Date.now();
+        profile.responseTime += endTime - startTime;
         if (isProfiler) {
           return isProfiler = false;
         } else {
-          endTime = Date.now();
-          profile.responseTime += endTime - startTime;
           return profile.status[res.statusCode] = (profile.status[res.statusCode] || 0) + 1;
         }
       });

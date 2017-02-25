@@ -34,19 +34,18 @@ module.exports = (ndx) ->
       profile.db.select++
   ndx.app.use (req, res, next) ->
     isProfiler = false
-    startTime = null
+    startTime = Date.now()
     if req.url is '/api/profiler'
       isProfiler = true
     else
-      startTime = Date.now()
       profile.count.all++
       profile.count[req.method] = (profile.count[req.method] or 0) + 1
     res.on 'finish', ->
+      endTime = Date.now()
+      profile.responseTime += endTime - startTime
       if isProfiler
         isProfiler = false
       else
-        endTime = Date.now()
-        profile.responseTime += endTime - startTime
         profile.status[res.statusCode] = (profile.status[res.statusCode] or 0) + 1
     next()
   ndx.app.get '/api/profiler', ndx.authenticate('superadmin'), (req, res) ->
