@@ -8,6 +8,7 @@ module.exports = (ndx) ->
     memory: 0
     responseTime: 0
     count:
+      total: 0
       all: 0
     status: {}
     db:
@@ -35,6 +36,7 @@ module.exports = (ndx) ->
   ndx.app.use (req, res, next) ->
     isProfiler = false
     startTime = Date.now()
+    profile.count.total++
     if req.url is '/api/profiler'
       isProfiler = true
     else

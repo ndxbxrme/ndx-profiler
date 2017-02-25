@@ -11,6 +11,7 @@
       memory: 0,
       responseTime: 0,
       count: {
+        total: 0,
         all: 0
       },
       status: {},
@@ -50,6 +51,7 @@
       var startTime;
       isProfiler = false;
       startTime = Date.now();
+      profile.count.total++;
       if (req.url === '/api/profiler') {
         isProfiler = true;
       } else {
