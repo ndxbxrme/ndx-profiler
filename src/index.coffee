@@ -47,6 +47,7 @@ module.exports = (ndx) ->
       profile.responseTime += endTime - startTime
       if isProfiler
         isProfiler = false
+        profile.db.select--
       else
         profile.status[res.statusCode] = (profile.status[res.statusCode] or 0) + 1
     next()

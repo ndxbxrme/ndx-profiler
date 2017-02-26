@@ -63,7 +63,8 @@
         endTime = Date.now();
         profile.responseTime += endTime - startTime;
         if (isProfiler) {
-          return isProfiler = false;
+          isProfiler = false;
+          return profile.db.select--;
         } else {
           return profile.status[res.statusCode] = (profile.status[res.statusCode] || 0) + 1;
         }
