@@ -40,14 +40,16 @@ module.exports = (ndx) ->
     if req.url is '/api/profiler'
       isProfiler = true
     else
-      profile.count.all++
+      if req.method isnt 'OPTIONS'
+        profile.count.all++
       profile.count[req.method] = (profile.count[req.method] or 0) + 1
     res.on 'finish', ->
       endTime = Date.now()
       profile.responseTime += endTime - startTime
       if isProfiler
         isProfiler = false
-        profile.db.select--
+        if req.method isnt 'OPTIONS'
+          profile.db.select--
       else
         profile.status[res.statusCode] = (profile.status[res.statusCode] or 0) + 1
     next()

@@ -55,7 +55,9 @@
       if (req.url === '/api/profiler') {
         isProfiler = true;
       } else {
-        profile.count.all++;
+        if (req.method !== 'OPTIONS') {
+          profile.count.all++;
+        }
         profile.count[req.method] = (profile.count[req.method] || 0) + 1;
       }
       res.on('finish', function() {
@@ -64,7 +66,9 @@
         profile.responseTime += endTime - startTime;
         if (isProfiler) {
           isProfiler = false;
-          return profile.db.select--;
+          if (req.method !== 'OPTIONS') {
+            return profile.db.select--;
+          }
         } else {
           return profile.status[res.statusCode] = (profile.status[res.statusCode] || 0) + 1;
         }
