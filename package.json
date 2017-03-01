@@ -1,6 +1,6 @@
 {
   "name": "ndx-profiler",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "server profiler for ndx-framework",
   "main": "build/index.js",
   "scripts": {

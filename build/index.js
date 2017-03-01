@@ -65,10 +65,12 @@
         endTime = Date.now();
         profile.responseTime += endTime - startTime;
         if (isProfiler) {
-          isProfiler = false;
-          if (req.method !== 'OPTIONS') {
-            return profile.db.select--;
-          }
+          return isProfiler = false;
+
+          /*
+          if req.method isnt 'OPTIONS'
+            profile.db.select--
+           */
         } else {
           return profile.status[res.statusCode] = (profile.status[res.statusCode] || 0) + 1;
         }
