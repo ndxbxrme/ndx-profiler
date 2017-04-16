@@ -27,25 +27,29 @@
       version: ndx.version,
       dbVersion: ndx.database.version()
     };
-    ndx.database.on('insert', function() {
+    ndx.database.on('insert', function(args, cb) {
       if (!isProfiler) {
-        return profile.db.insert++;
+        profile.db.insert++;
       }
+      return cb();
     });
-    ndx.database.on('update', function() {
+    ndx.database.on('update', function(args, cb) {
       if (!isProfiler) {
-        return profile.db.update++;
+        profile.db.update++;
       }
+      return cb();
     });
-    ndx.database.on('delete', function() {
+    ndx.database.on('delete', function(args, cb) {
       if (!isProfiler) {
-        return profile.db["delete"]++;
+        profile.db["delete"]++;
       }
+      return cb();
     });
-    ndx.database.on('select', function() {
+    ndx.database.on('select', function(args, cb) {
       if (!isProfiler) {
-        return profile.db.select++;
+        profile.db.select++;
       }
+      return cb();
     });
     ndx.app.use(function(req, res, next) {
       var startTime;

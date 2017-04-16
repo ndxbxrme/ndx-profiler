@@ -21,18 +21,22 @@ module.exports = (ndx) ->
     id: ndx.id
     version: ndx.version
     dbVersion: ndx.database.version()
-  ndx.database.on 'insert', ->
+  ndx.database.on 'insert', (args, cb) ->
     if not isProfiler
       profile.db.insert++
-  ndx.database.on 'update', ->
+    cb()
+  ndx.database.on 'update', (args, cb) ->
     if not isProfiler
       profile.db.update++
-  ndx.database.on 'delete', ->
+    cb()
+  ndx.database.on 'delete', (args, cb) ->
     if not isProfiler
       profile.db.delete++
-  ndx.database.on 'select', ->
+    cb()
+  ndx.database.on 'select', (args, cb) ->
     if not isProfiler
       profile.db.select++
+    cb()
   ndx.app.use (req, res, next) ->
     isProfiler = false
     startTime = Date.now()
