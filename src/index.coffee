@@ -5,6 +5,7 @@ cpu = require './cpu.js'
 module.exports = (ndx) ->
   isProfiler = false
   profile =
+    sockets: 0
     memory: 0
     responseTime: 0
     count:
@@ -21,6 +22,12 @@ module.exports = (ndx) ->
     id: ndx.id
     version: ndx.version
     dbVersion: ndx.database.version()
+  setTimeout ->
+    if ndx.socket
+      ndx.socket.on 'connection', ->
+        profile.sockets++
+      ndx.socket.on 'disconnect', ->
+        profile.sockets--
   ndx.database.on 'insert', (args, cb) ->
     if not isProfiler
       profile.db.insert++

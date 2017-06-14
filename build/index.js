@@ -8,6 +8,7 @@
     var isProfiler, profile;
     isProfiler = false;
     profile = {
+      sockets: 0,
       memory: 0,
       responseTime: 0,
       count: {
@@ -27,6 +28,16 @@
       version: ndx.version,
       dbVersion: ndx.database.version()
     };
+    setTimeout(function() {
+      if (ndx.socket) {
+        ndx.socket.on('connection', function() {
+          return profile.sockets++;
+        });
+        return ndx.socket.on('disconnect', function() {
+          return profile.sockets--;
+        });
+      }
+    });
     ndx.database.on('insert', function(args, cb) {
       if (!isProfiler) {
         profile.db.insert++;
