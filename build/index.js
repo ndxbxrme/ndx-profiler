@@ -9,6 +9,7 @@
     isProfiler = false;
     profile = {
       sockets: 0,
+      pageViews: 0,
       memory: 0,
       responseTime: 0,
       count: {
@@ -33,8 +34,13 @@
         ndx.socket.on('connection', function() {
           return profile.sockets++;
         });
-        return ndx.socket.on('disconnect', function() {
+        ndx.socket.on('disconnect', function() {
           return profile.sockets--;
+        });
+      }
+      if (ndx.passport) {
+        return ndx.passport.on('refreshLogin', function() {
+          return profile.pageViews++;
         });
       }
     });

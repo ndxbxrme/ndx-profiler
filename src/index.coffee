@@ -6,6 +6,7 @@ module.exports = (ndx) ->
   isProfiler = false
   profile =
     sockets: 0
+    pageViews: 0
     memory: 0
     responseTime: 0
     count:
@@ -28,6 +29,9 @@ module.exports = (ndx) ->
         profile.sockets++
       ndx.socket.on 'disconnect', ->
         profile.sockets--
+    if ndx.passport
+      ndx.passport.on 'refreshLogin', ->
+        profile.pageViews++
   ndx.database.on 'insert', (args, cb) ->
     if not isProfiler
       profile.db.insert++
