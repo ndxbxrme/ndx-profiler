@@ -30,8 +30,9 @@ module.exports = (ndx) ->
       ndx.socket.on 'disconnect', ->
         profile.sockets--
     if ndx.passport
-      ndx.passport.on 'refreshLogin', ->
+      ndx.passport.on 'refreshLogin', (args, cb) ->
         profile.pageViews++
+        cb?()
   ndx.database.on 'insert', (args, cb) ->
     if not isProfiler
       profile.db.insert++

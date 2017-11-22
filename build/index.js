@@ -39,8 +39,9 @@
         });
       }
       if (ndx.passport) {
-        return ndx.passport.on('refreshLogin', function() {
-          return profile.pageViews++;
+        return ndx.passport.on('refreshLogin', function(args, cb) {
+          profile.pageViews++;
+          return typeof cb === "function" ? cb() : void 0;
         });
       }
     });
