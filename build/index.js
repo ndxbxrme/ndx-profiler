@@ -5,9 +5,12 @@
   cpu = require('./cpu.js');
 
   module.exports = function(ndx) {
-    var isProfiler, profile;
+    var MAX_HISTORY_SIZE, history, isProfiler, profile;
+    MAX_HISTORY_SIZE = 6 * 30;
     isProfiler = false;
+    history = [];
     profile = {
+      date: new Date().valueOf(),
       sockets: 0,
       pageViews: 0,
       memory: 0,
@@ -45,6 +48,17 @@
         });
       }
     });
+    setInterval(function() {
+      profile.memory = process.memoryUsage().rss / 1048576;
+      profile.sqlCacheSize = ndx.database.cacheSize();
+      profile.cpu = cpu.cpuLoad();
+      profile.server = ndx.maintenanceMode ? 'maintenance' : 'ok';
+      history.push(JSON.parse(JSON.stringify(profile)));
+      if (history.length > MAX_HISTORY_SIZE) {
+        history.splice(0, history.length - MAX_HISTORY_SIZE);
+      }
+      return profile.date = new Date().valueOf();
+    }, 10000);
     ndx.database.on('insert', function(args, cb) {
       if (!isProfiler) {
         profile.db.insert++;
@@ -99,11 +113,11 @@
       });
       return next();
     });
-    return ndx.app.get('/api/profiler', ndx.authenticate('superadmin'), function(req, res) {
-      profile.memory = process.memoryUsage().rss / 1048576;
-      profile.sqlCacheSize = ndx.database.cacheSize();
-      profile.cpu = cpu.cpuLoad();
+    ndx.app.get('/api/profiler', ndx.authenticate(), function(req, res) {
       return res.json(profile);
+    });
+    return ndx.app.get('/api/profiler/history', ndx.authenticate(), function(req, res) {
+      return res.json(history);
     });
   };
 

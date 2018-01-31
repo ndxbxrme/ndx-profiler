@@ -3,8 +3,11 @@
 cpu = require './cpu.js'
 
 module.exports = (ndx) ->
+  MAX_HISTORY_SIZE = 6 * 30
   isProfiler = false
+  history = []
   profile =
+    date: new Date().valueOf()
     sockets: 0
     pageViews: 0
     memory: 0
@@ -33,6 +36,16 @@ module.exports = (ndx) ->
       ndx.passport.on 'refreshLogin', (args, cb) ->
         profile.pageViews++
         cb?()
+  setInterval ->
+    profile.memory = process.memoryUsage().rss / 1048576
+    profile.sqlCacheSize = ndx.database.cacheSize()
+    profile.cpu = cpu.cpuLoad()
+    profile.server = if ndx.maintenanceMode then 'maintenance' else 'ok'
+    history.push JSON.parse JSON.stringify profile
+    if history.length > MAX_HISTORY_SIZE
+      history.splice 0, history.length - MAX_HISTORY_SIZE
+    profile.date = new Date().valueOf()
+  , 10000
   ndx.database.on 'insert', (args, cb) ->
     if not isProfiler
       profile.db.insert++
@@ -71,8 +84,7 @@ module.exports = (ndx) ->
       else
         profile.status[res.statusCode] = (profile.status[res.statusCode] or 0) + 1
     next()
-  ndx.app.get '/api/profiler', ndx.authenticate('superadmin'), (req, res) ->
-    profile.memory = process.memoryUsage().rss / 1048576
-    profile.sqlCacheSize = ndx.database.cacheSize()
-    profile.cpu = cpu.cpuLoad()
+  ndx.app.get '/api/profiler', ndx.authenticate(), (req, res) ->
     res.json profile
+  ndx.app.get '/api/profiler/history', ndx.authenticate(), (req, res) ->
+    res.json history
