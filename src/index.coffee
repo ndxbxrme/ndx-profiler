@@ -85,6 +85,7 @@ module.exports = (ndx) ->
         profile.status[res.statusCode] = (profile.status[res.statusCode] or 0) + 1
     next()
   ndx.app.get '/api/profiler', ndx.authenticate(), (req, res) ->
+    profile.server = if ndx.maintenanceMode then 'maintenance' else 'ok'
     res.json profile
   ndx.app.get '/api/profiler/history', ndx.authenticate(), (req, res) ->
     res.json history

@@ -114,6 +114,7 @@
       return next();
     });
     ndx.app.get('/api/profiler', ndx.authenticate(), function(req, res) {
+      profile.server = ndx.maintenanceMode ? 'maintenance' : 'ok';
       return res.json(profile);
     });
     return ndx.app.get('/api/profiler/history', ndx.authenticate(), function(req, res) {
