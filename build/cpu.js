@@ -4,7 +4,7 @@
   os = require('os');
 
   cpuAverage = function() {
-    var cpu, cpus, i, idle, len, total, totalIdle, totalTick, type;
+    var cpu, cpus, i, idle, len, percent, total, totalIdle, totalTick, type;
     totalIdle = 0;
     totalTick = 0;
     cpus = os.cpus();
@@ -17,9 +17,11 @@
     }
     idle = totalIdle / cpus.length;
     total = totalTick / cpus.length;
+    percent = 1 - totalIdle / totalTick;
     return {
       idle: idle,
-      total: total
+      total: total,
+      percent: percent
     };
   };
 

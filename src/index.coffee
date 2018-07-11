@@ -39,7 +39,7 @@ module.exports = (ndx) ->
   setInterval ->
     profile.memory = process.memoryUsage().rss / 1048576
     profile.sqlCacheSize = ndx.database.cacheSize()
-    profile.cpu = cpu.cpuLoad()
+    profile.cpu = cpu.cpuAverage()
     profile.server = if ndx.maintenanceMode then 'maintenance' else 'ok'
     history.push JSON.parse JSON.stringify profile
     if history.length > MAX_HISTORY_SIZE

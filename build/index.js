@@ -51,7 +51,7 @@
     setInterval(function() {
       profile.memory = process.memoryUsage().rss / 1048576;
       profile.sqlCacheSize = ndx.database.cacheSize();
-      profile.cpu = cpu.cpuLoad();
+      profile.cpu = cpu.cpuAverage();
       profile.server = ndx.maintenanceMode ? 'maintenance' : 'ok';
       history.push(JSON.parse(JSON.stringify(profile)));
       if (history.length > MAX_HISTORY_SIZE) {
