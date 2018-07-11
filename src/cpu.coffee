@@ -14,7 +14,7 @@ cpuAverage = ->
 
     idle    = totalIdle / cpus.length
     total   = totalTick / cpus.length
-    percent = 1 - totalIdle / totalTick
+    percent = (1 - totalIdle / totalTick) * 100
 
     return {
         idle
