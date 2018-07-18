@@ -26,6 +26,7 @@ module.exports = (ndx) ->
     id: ndx.id
     version: ndx.version
     dbVersion: ndx.database.version()
+    vars: ndx.vars
   setTimeout ->
     if ndx.socket
       ndx.socket.on 'connection', ->
@@ -41,6 +42,7 @@ module.exports = (ndx) ->
     profile.sqlCacheSize = ndx.database.cacheSize()
     profile.cpu = cpu.cpuAverage()
     profile.server = if ndx.maintenanceMode then 'maintenance' else 'ok'
+    profile.vars = ndx.vars
     history.push JSON.parse JSON.stringify profile
     if history.length > MAX_HISTORY_SIZE
       history.splice 0, history.length - MAX_HISTORY_SIZE
